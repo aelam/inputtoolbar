@@ -523,7 +523,11 @@
         return NO;
 	}
     
-	if ([atext isEqualToString:@"\n"]) 
+    if ([self.delegate respondsToSelector:@selector(expandingTextView:shouldChangeTextInRange:replacementText:)]) {
+        BOOL rs = [self.delegate expandingTextView:self shouldChangeTextInRange:range replacementText:atext];
+        return rs;
+    }
+    else if ([atext isEqualToString:@"\n"])
     {
 		if ([self.delegate respondsToSelector:@selector(expandingTextViewShouldReturn:)]) 
         {

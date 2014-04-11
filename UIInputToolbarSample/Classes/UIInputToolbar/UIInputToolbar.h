@@ -30,12 +30,12 @@
 
 #import <UIKit/UIKit.h>
 #import "UIExpandingTextView.h"
+
 @class UIInputToolbar;
 
 @protocol UIInputToolbarDelegate <NSObject>
 @optional
 -(void)inputButtonPressed:(UIInputToolbar *) toolbar;
--(void)plusButtonPressed:(UIInputToolbar *) toolbar;
 -(void)inputToolbar:(UIInputToolbar *) inputToolbar DidChangeHeight:(CGFloat) height;
 -(void)inputToolbar:(UIInputToolbar *) inputToolbar WillChangeHeight:(CGFloat) height;
 
@@ -48,12 +48,11 @@
 - (void)inputToolbarViewDidChangeSelection:(UIInputToolbar *)inputToolbar;
 @end
 
-@interface UIInputToolbar : UIToolbar <UIExpandingTextViewDelegate>
+@interface UIInputToolbar : UIView <UIExpandingTextViewDelegate>
 @property (nonatomic) BOOL animateHeightChanges;
 @property (strong,nonatomic) UIExpandingTextView *textView;
-@property (strong,nonatomic) UIBarButtonItem *inputButton;
-@property (strong,nonatomic) UIBarButtonItem *plusButtonItem;
-@property (nonatomic) BOOL isPlusButtonVisible;
+@property (strong,nonatomic) UIButton *inputButton;
+@property (strong,nonatomic) UILabel *textCountLabel;
 @property (weak,nonatomic) NSObject<UIInputToolbarDelegate> *inputDelegate;
 
 - (id)initWithFrame:(CGRect)frame label:(NSString *)label;

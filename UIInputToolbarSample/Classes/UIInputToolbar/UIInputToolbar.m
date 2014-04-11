@@ -34,8 +34,6 @@ static CGFloat kDefaultButtonHeight = 26;
 static CGFloat kInputFieltMargin = 8;
 
 @interface UIInputToolbar()
-@property (strong, nonatomic) UIBarButtonItem *edgeSeparator;
-@property (strong, nonatomic) UIBarButtonItem *textInputItem;
 @property (nonatomic) CGFloat touchBeginY;
 @end
 
@@ -53,118 +51,54 @@ static CGFloat kInputFieltMargin = 8;
     }
 }
 
-- (void)plusButtonPressed{
-    if ([self.inputDelegate respondsToSelector:@selector(plusButtonPressed:)]) {
-        [self.inputDelegate plusButtonPressed:self];
-    }
-}
-
 -(void)setupToolbar:(NSString *)buttonLabel
 {
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
-    _isPlusButtonVisible = YES;
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button setTitle:buttonLabel forState:UIControlStateNormal];
     [button addTarget:self action:@selector(inputButtonPressed) forControlEvents:UIControlEventTouchDown];
     
-    UIButton *buttonPlus = [UIButton buttonWithType:UIButtonTypeCustom];
-    [buttonPlus setTitle:@"+" forState:UIControlStateNormal];
-    [buttonPlus addTarget:self action:@selector(plusButtonPressed) forControlEvents:UIControlEventTouchDown];
-    buttonPlus.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    
     CGFloat toolbarEdgeSeparatorWidth = 0;
     
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")){
-        
-        UIImage *toolbarBackground = nil;
-        UIImage *buttonImage = nil;
-        toolbarBackground = [UIImage imageNamed:@"toolbarbg.png"];
-        toolbarBackground = [toolbarBackground stretchableImageWithLeftCapWidth:floorf(toolbarBackground.size.width/2)
-                                                                   topCapHeight:floorf(toolbarBackground.size.height/2)];
-        [self setBackgroundImage:toolbarBackground
-              forToolbarPosition:UIToolbarPositionBottom
-                      barMetrics:UIBarMetricsDefault];
-        
-        buttonImage = [UIImage imageNamed:@"buttonbg.png"];
-        buttonImage = [buttonImage resizableImageWithCapInsets:UIEdgeInsetsMake(floorf(buttonImage.size.height/2),
-                                                                                floorf(buttonImage.size.height/2),
-                                                                                floorf(buttonImage.size.height/2),
-                                                                                floorf(buttonImage.size.height/2))];
-        
-        UIImage *plusButtonImage = [buttonImage resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)];
-        
-        [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
-        [button setBackgroundImage:buttonImage forState:UIControlStateDisabled];
-        
-        [buttonPlus setBackgroundImage:plusButtonImage forState:UIControlStateNormal];
-        [buttonPlus setBackgroundImage:plusButtonImage forState:UIControlStateDisabled];
-        
-        /* Create custom send button*/
-        button.titleEdgeInsets = UIEdgeInsetsMake(0, 2, 0, 2);
-        button.titleLabel.font = [UIFont boldSystemFontOfSize:15.0f];
-        button.titleLabel.shadowOffset = CGSizeMake(0, -1);
-        [button setTitleColor:[UIColor colorWithRed:1 green:1 blue:1 alpha:0.7]
-                     forState:UIControlStateDisabled];
-        [button sizeToFit];
-        
-        CGRect bounds = button.bounds;
-        bounds.size.height = kDefaultButtonHeight;
-        button.bounds = bounds;
-
-        buttonPlus.bounds = CGRectMake(0, 0, button.bounds.size.height, button.bounds.size.height);
-        buttonPlus.titleEdgeInsets = UIEdgeInsetsMake(0, 2, 6, 2);
-        buttonPlus.titleLabel.font = [UIFont boldSystemFontOfSize:30.0f];
-        buttonPlus.titleLabel.shadowOffset = CGSizeMake(0, -1);
-        [buttonPlus setTitleColor:[UIColor colorWithRed:1 green:1 blue:1 alpha:0.7]
-                         forState:UIControlStateDisabled];
-        
-        toolbarEdgeSeparatorWidth = -6;
-    }
+    UIColor *buttonNormalColor = [UIColor colorWithRed:0 green:0.48 blue:1 alpha:1];
+    UIColor *buttonHighlightedColor = [UIColor colorWithRed:0.6 green:0.8 blue:1 alpha:1];
+    UIColor *buttonDisabledColor = [UIColor lightGrayColor];
     
-    else{
-        UIColor *buttonNormalColor = [UIColor colorWithRed:0 green:0.48 blue:1 alpha:1];
-        UIColor *buttonHighlightedColor = [UIColor colorWithRed:0.6 green:0.8 blue:1 alpha:1];
-        UIColor *buttonDisabledColor = [UIColor lightGrayColor];
-        
-        /* Create custom send button*/
-        button.titleLabel.font = [UIFont boldSystemFontOfSize:17.0f];
-        [button setTitleColor:buttonNormalColor forState:UIControlStateNormal];
-        [button setTitleColor:buttonHighlightedColor forState:UIControlStateHighlighted];
-        [button setTitleColor:buttonDisabledColor forState:UIControlStateDisabled];
-        [button sizeToFit];
-        
-        CGRect bounds = button.bounds;
-        bounds.size.height = kDefaultButtonHeight;
-        button.bounds = bounds;
-        
-        buttonPlus.bounds = CGRectMake(0, 0, button.bounds.size.height, button.bounds.size.height);
-        buttonPlus.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 8, 0);
-        buttonPlus.titleLabel.font = [UIFont systemFontOfSize:40.0f];
-        [buttonPlus setTitleColor:buttonNormalColor forState:UIControlStateNormal];
-        [buttonPlus setTitleColor:buttonHighlightedColor forState:UIControlStateHighlighted];
-        [buttonPlus setTitleColor:buttonDisabledColor forState:UIControlStateDisabled];
-        
-        toolbarEdgeSeparatorWidth = -12;
-    }
+    /* Create custom send button*/
+    button.titleLabel.font = [UIFont boldSystemFontOfSize:17.0f];
+    [button setTitleColor:buttonNormalColor forState:UIControlStateNormal];
+    [button setTitleColor:buttonHighlightedColor forState:UIControlStateHighlighted];
+    [button setTitleColor:buttonDisabledColor forState:UIControlStateDisabled];
+    [button sizeToFit];
     
+    CGRect bounds = button.bounds;
+    bounds.size.height = kDefaultButtonHeight;
+    button.bounds = bounds;
+    
+    toolbarEdgeSeparatorWidth = -12;
+    
+    self.inputButton = button;
+    self.inputButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
 
-    self.plusButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonPlus];
-    self.inputButton = [[UIBarButtonItem alloc] initWithCustomView:button];
-    self.inputButton.customView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     /* Disable button initially */
     self.inputButton.enabled = NO;
     
     /* Create UIExpandingTextView input */
     self.textView = [[UIExpandingTextView alloc] initWithFrame:self.bounds];
-    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    self.textView.frame = CGRectOffset(self.textView.frame, 0, (self.bounds.size.height - self.textView.bounds.size.height) / 2);
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     
-    _textInputItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    _textInputItem.customView = self.textView;
+    CGRect textViewRect = UIEdgeInsetsInsetRect(self.bounds, UIEdgeInsetsMake(5, 5, 5, 60));
+    self.textView.frame = textViewRect;
     
-    _edgeSeparator = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    _edgeSeparator.width = toolbarEdgeSeparatorWidth;
+    self.inputButton.frame = CGRectMake(self.bounds.size.width - 60, 20, 50, 30);
+    
+    self.textCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width - 60, 5, 60, 20)];
+    self.textCountLabel.textAlignment = NSTextAlignmentCenter;
+    self.textCountLabel.font = [UIFont systemFontOfSize:13];
+    self.textCountLabel.textColor = [UIColor darkGrayColor];
+    self.textCountLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+//    self.textCountLabel.text = @"1/3";
     
     [self adjustVisibleItems];
     
@@ -172,87 +106,64 @@ static CGFloat kInputFieltMargin = 8;
     self.animateHeightChanges = YES;
 }
 
--(id)initWithFrame:(CGRect)frame label:(NSString *)label
-{
-    if ((self = [super initWithFrame:frame])) {
-        [self setupToolbar:label];
-    }
-    return self;
-}
-
 -(id)initWithFrame:(CGRect)frame
 {
     if ((self = [super initWithFrame:frame])) {
-        [self setupToolbar:@"Send"];
+        [self _initialize];
     }
     return self;
 }
 
--(id)init
-{
-    if ((self = [super init])) {
-        [self setupToolbar:@"Send"];
-    }
-    return self;
+
+- (void)_initialize {
+    self.backgroundColor = [UIColor whiteColor];
+    [self setupToolbar:@"Send"];
 }
 
 - (void) adjustVisibleItems {
     
-    if (_isPlusButtonVisible) {
-        [self setItems:@[self.edgeSeparator, self.plusButtonItem, self.textInputItem, self.inputButton, self.edgeSeparator]
-              animated:NO];
-    }
-    else {
-        [self setItems:@[self.edgeSeparator, self.textInputItem, self.inputButton, self.edgeSeparator]
-              animated:NO];
-    }
+    [self addSubview:self.textView];
+    [self addSubview:self.inputButton];
+    [self addSubview:self.textCountLabel];
+
     [self layoutExpandingTextView];
 }
 
 - (void) layoutExpandingTextView {
+    BOOL calculatePosition = YES;
+
     CGRect frame = self.textView.frame;
     frame.size.width = self.bounds.size.width;
     frame.origin.x = 0;
-    
-    BOOL calculatePosition = YES;
-    
-    for (UIBarButtonItem *item in self.items) {
-        if ([item.customView isKindOfClass:[UIExpandingTextView class]]) {
+    for(UIView *view in self.subviews) {
+        if ([view isKindOfClass:[UIExpandingTextView class]]) {
             calculatePosition = NO;
-        }
-        else if (item.customView){
+        } else if (view) {
             if (calculatePosition) {
-                frame.origin.x += item.width ? item.width : item.customView.frame.size.width;
             }
-            frame.size.width -= item.width + item.customView.frame.size.width;
+
         }
     }
-    
-    frame.size.width -= kInputFieltMargin * 2;
-    frame.origin.x += kInputFieltMargin;
-    self.textView.frame = frame;
 }
 
 - (void) layoutSubviews{
     [super layoutSubviews];
     
-    CGRect i = self.inputButton.customView.frame;
+    CGRect i = self.inputButton.frame;
     i.origin.y = self.frame.size.height - i.size.height - 7;
-    self.inputButton.customView.frame = i;
-    
-    i = self.plusButtonItem.customView.frame;
-    i.origin.y = self.frame.size.height - i.size.height - 7;
-    self.plusButtonItem.customView.frame = i;
+    self.inputButton.frame = i;
     
     self.textView.animateHeightChange = self.animateHeightChanges;
+    
+    CGRect intersectionRect = CGRectIntersection(self.inputButton.frame, self.textCountLabel.frame);
+    if (intersectionRect.size.height > 0) {
+        self.textCountLabel.hidden = YES;
+    } else {
+        self.textCountLabel.hidden = NO;
+    }
+    
 }
 
-- (void) setIsPlusButtonVisible:(BOOL)isPlusButtonVisible {
-    if (_isPlusButtonVisible != isPlusButtonVisible) {
-        _isPlusButtonVisible = isPlusButtonVisible;
-        [self adjustVisibleItems];
-    }
-}
 
 #pragma mark - UIExpandingTextView delegate
 
