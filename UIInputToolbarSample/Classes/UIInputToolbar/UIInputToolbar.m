@@ -55,7 +55,7 @@ static CGFloat kInputFieltMargin = 8;
 {
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setTitle:buttonLabel forState:UIControlStateNormal];
     [button addTarget:self action:@selector(inputButtonPressed) forControlEvents:UIControlEventTouchDown];
     
@@ -90,20 +90,26 @@ static CGFloat kInputFieltMargin = 8;
     
     CGRect textViewRect = UIEdgeInsetsInsetRect(self.bounds, UIEdgeInsetsMake(5, 5, 5, 60));
     self.textView.frame = textViewRect;
+
+
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        self.inputButton.frame = CGRectMake(self.bounds.size.width - 60, textViewRect.origin.y, 55, textViewRect.size.height);
+    } else {
+        self.inputButton.frame = CGRectMake(self.bounds.size.width - 60, textViewRect.origin.y, 55, textViewRect.size.height - 5);
+    }
     
-    self.inputButton.frame = CGRectMake(self.bounds.size.width - 60, 20, 50, 30);
     
-    self.textCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width - 60, 5, 60, 20)];
+    self.textCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width - 60, 5, 60, 15)];
     self.textCountLabel.textAlignment = NSTextAlignmentCenter;
     self.textCountLabel.font = [UIFont systemFontOfSize:13];
     self.textCountLabel.textColor = [UIColor darkGrayColor];
     self.textCountLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-//    self.textCountLabel.text = @"1/3";
     
     [self adjustVisibleItems];
     
     self.textView.delegate = self;
     self.animateHeightChanges = YES;
+    
 }
 
 -(id)initWithFrame:(CGRect)frame
@@ -123,8 +129,8 @@ static CGFloat kInputFieltMargin = 8;
 - (void) adjustVisibleItems {
     
     [self addSubview:self.textView];
-    [self addSubview:self.inputButton];
     [self addSubview:self.textCountLabel];
+    [self addSubview:self.inputButton];
 
     [self layoutExpandingTextView];
 }

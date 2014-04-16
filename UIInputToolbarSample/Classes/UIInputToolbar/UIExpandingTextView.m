@@ -86,7 +86,7 @@
         self.isOnPreIOS7 = SYSTEM_VERSION_LESS_THAN(@"7.0");
         
         if (self.isOnPreIOS7){
-            textViewBackgroundImage = [UIImage imageNamed:@"textbg"];
+            textViewBackgroundImage = [UIImage imageNamed:@"textbg_7"];
             self.internalTextView.contentInset = UIEdgeInsetsMake(-4, 0, 4, 0);
             self.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(6, 0, 6, 0);
             self.placeholderLabel.frame = CGRectInset(textViewFrame, 4, 0);

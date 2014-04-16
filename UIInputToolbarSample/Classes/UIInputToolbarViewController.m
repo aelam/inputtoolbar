@@ -52,12 +52,15 @@
     keyboardIsVisible = NO;
     /* Create toolbar */
     self.inputToolbar = [[UIInputToolbar alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height - kDefaultToolbarHeight, self.view.bounds.size.width, kDefaultToolbarHeight)
-                                                        label:@"Send"];
+                                                        ];
+    self.inputToolbar.layer.borderWidth = 1;
+    self.inputToolbar.layer.borderColor = [UIColor yellowColor].CGColor;
     self.inputToolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleWidth;
     [self.view addSubview:self.inputToolbar];
     inputToolbar.inputDelegate = self;
     inputToolbar.textView.placeholder = @"Placeholder";
     inputToolbar.textView.maximumNumberOfLines = 4;
+    [inputToolbar.inputButton setTitle:@"发布" forState:UIControlStateNormal];
 }
 
 - (void)viewDidUnload
@@ -92,7 +95,6 @@
 }
 
 - (void) plusSwitchPressed:(UISwitch *) plusSwitch {
-    self.inputToolbar.isPlusButtonVisible = plusSwitch.on;
 }
 
 #pragma mark -
@@ -130,6 +132,11 @@
 	self.inputToolbar.frame = frame;
 	[UIView commitAnimations];
     keyboardIsVisible = NO;
+}
+
+- (void)inputToolbarViewDidChange:(UIInputToolbar *)inputToolbar {
+    self.inputToolbar.textCountLabel.text = [NSString stringWithFormat:@"%d", self.inputToolbar.textView.text.length];
+    
 }
 
 -(void)inputButtonPressed:(UIInputToolbar *) toolbar
